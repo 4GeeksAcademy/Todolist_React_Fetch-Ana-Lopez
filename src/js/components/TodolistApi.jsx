@@ -9,9 +9,9 @@ export const TodolistApi = () => {
 
     const API_URL = "https://playground.4geeks.com/todo"
 
-    const creasrUsuario = () => {
+    const crearUsuario = () => {
 
-        fetch(API_URL + "/users/astrid", {
+        fetch(API_URL + "/users/nahyah", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -26,7 +26,7 @@ export const TodolistApi = () => {
 
     const obtenerLista = () => {
 
-        fetch(API_URL + "/users/astrid")
+        fetch(API_URL + "/users/nahyah")
             .then((response) => {
                 if (response.status === 404) {
                     crearUsuario()
