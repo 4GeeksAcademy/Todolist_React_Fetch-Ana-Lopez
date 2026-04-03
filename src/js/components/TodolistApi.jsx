@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 export const TodolistApi = () => {
 
 
-    //estado para guardar el array pe dersonajes (inicialmente esta vacio)
+    //estado para guardar el array de tareas (inicialmente esta vacio):
     const [lista, setLista] = useState([])
     const [tarea, setTarea] = useState("")
 
+    //guardo la url en un espacio de memoria:
     const API_URL = "https://playground.4geeks.com/todo"
 
     const crearUsuario = () => {
@@ -18,7 +19,7 @@ export const TodolistApi = () => {
             }
         })
             .then(response => response.json()) //conviuerte la respuesta a un formato JSON
-            .then(data => { console.log(data) })  //toma los datos para mostrar en el array
+            .then(data => { console.log(data) })  //No necesito almacenar el dato (en este caso el usuario) en ningun estado,se va a crear directamente. Tomara el dato para mostrar en la consola. 
             .catch(error => {
                 console.error("Hubo un problema al crear el usuario", error); //imprimir el error enn la consola para depurar
             })
