@@ -45,21 +45,21 @@ export const TodolistApi = () => {
     //       },[ cuando se repite, si esta vacio se ejecuta solo una vez al cargar la pagina, si tiene un dato se ejecuta cada vez que ese dato cambie ])
 
     const crearTarea = async (text) => {
-         if (tarea.trim() === "") return;
+        if (tarea.trim() === "") return;
         try {
 
-            const response = 
-            await fetch(API_URL + "/todos/nahyah", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                //se envia la tarea en el body como una cadena JSON
-                body: JSON.stringify({
-                    label: text,
-                    is_done: false
+            const response =
+                await fetch(API_URL + "/todos/nahyah", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    //se envia la tarea en el body como una cadena JSON
+                    body: JSON.stringify({
+                        label: text,
+                        is_done: false
+                    })
                 })
-            })
 
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: No se pudo crear la tarea`)
@@ -87,24 +87,24 @@ export const TodolistApi = () => {
         }
     }
 
-const eliminarTarea = async (id) => {
+    const eliminarTarea = async (id) => {
 
-    try {
-        const response = await fetch(API_URL + "/todos/" + id, {
-            method: "DELETE"
-        });
+        try {
+            const response = await fetch(API_URL + "/todos/" + id, {
+                method: "DELETE"
+            });
 
-        if (!response.ok) {
-            throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
+            }
+
+            // actualizar la lsita
+            await obtenerLista();
+
+        } catch (error) {
+            console.error("Hubo un problema al eliminar la tarea", error);
         }
-
-        // actualizar la lsita
-        await obtenerLista();
-
-    } catch (error) {
-        console.error("Hubo un problema al eliminar la tarea", error);
     }
-}
 
 
     useEffect(() => {
@@ -115,26 +115,32 @@ const eliminarTarea = async (id) => {
     return (
         <div>
             <h1>Tareas de NahYah</h1>
+            <div className="container paper">
+                <div className="input-group flex-nowrap">
+                <input type="text"
+                    placeholder="Agregar tarea "
+                    //  actualiza el estado tarea cada vez que el usuario escribe
+                    onChange={(e) => setTarea(e.target.value)}
+                    value={tarea}
+                    //llama ala funcion que maneja la creacion del estado al presionar una tecla ENTER
+                    onKeyDown={inputtext}
+                />
+                </div>
 
-            <input type="text"
-                placeholder="Agregar tarea "
-                //  actualiza el estado tarea cada vez que el usuario escribe
-                onChange={(e) => setTarea(e.target.value)}
-                value={tarea}
-                //llama ala funcion que maneja la creacion del estado al presionar una tecla ENTER
-                onKeyDown={inputtext}
-            />
 
 
 
-            {/* hacer condicional */}
-            <ol>
-                {lista.map((item) => (
-                    <li key={item.id}> {item.label}
-                    <button onClick={() => eliminarTarea(item.id)}>X</button>
-                    </li>
-                ))}
-            </ol>
+                {/* hacer condicional */}
+                <ol>
+                    {lista.map((item) => (
+                        <li key={item.id}> {item.label}
+                            {/* <button onClick={() => eliminarTarea(item.id)}>X</button> */}
+                            <button type="button" class="btn btn-outline-success" onClick={() => eliminarTarea(item.id)}>¡Hecho!</button>
+                        </li>
+                    ))}
+                </ol>
+                <p className="itemsleft">{lista.length} item left</p>
+            </div>
         </div>
     )
 
