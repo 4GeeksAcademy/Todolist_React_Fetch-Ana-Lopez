@@ -18,10 +18,10 @@ export const TodolistApi = () => {
                 "Content-Type": "application/json"
             }
         })
-            .then(response => response.json()) //conviuerte la respuesta a un formato JSON
-            .then(data => console.log(data))  //No necesito almacenar el dato (en este caso el usuario) en ningun estado,se va a crear directamente. Tomara el dato para mostrar en la consola. 
+            .then(response => response.json())
+            .then(data => console.log(data))
             .catch(error => {
-                console.error("Hubo un problema al crear el usuario", error); //imprimir el error enn la consola para depurar
+                console.error("Hubo un problema al crear el usuario", error);
             })
     }
 
@@ -34,15 +34,13 @@ export const TodolistApi = () => {
                 }
                 return response.json()
             })
-            .then(data => { setLista(data.todos) })  //toma los datos para mostrar en el array
+            .then(data => { setLista(data.todos) })
             .catch(error => {
-                console.error("Hubo un problema al obtener la lista de tareas", error); //imprimir el error enn la consola para depurar
+                console.error("Hubo un problema al obtener la lista de tareas", error);
             })
     }
 
-    //      useEffect(()=>{
-    //    aqui va el codigo que hace algo (ejemplo el fetch)
-    //       },[ cuando se repite, si esta vacio se ejecuta solo una vez al cargar la pagina, si tiene un dato se ejecuta cada vez que ese dato cambie ])
+
 
     const crearTarea = async (text) => {
         if (tarea.trim() === "") return;
@@ -54,7 +52,7 @@ export const TodolistApi = () => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    //se envia la tarea en el body como una cadena JSON
+
                     body: JSON.stringify({
                         label: text,
                         is_done: false
@@ -65,8 +63,8 @@ export const TodolistApi = () => {
                 throw new Error(`Error ${response.status}: No se pudo crear la tarea`)
             }
 
-            const data = await response.json() //conviuerte la respuesta a un formato JSON
-            // console.log("tarea creada con exito:", data);
+            const data = await response.json()
+
             await obtenerLista()
 
 
@@ -78,70 +76,65 @@ export const TodolistApi = () => {
     }
 
 
-    //funcion para crear la tarea
+
     const inputtext = (e) => {
         //si la tecla presionada es Enter
         if (e.key === "Enter") {
-            crearTarea(tarea) //llamar a la funcion de la API con el texto de la tarea
-            setTarea("") //limpiar el campo despues de enviar la tarea 
+            crearTarea(tarea)
+            setTarea("")
         }
     }
 
-    const eliminarTarea = async (id) => {
+        const eliminarTarea = async (id) => {
 
-        try {
-            const response = await fetch(API_URL + "/todos/" + id, {
-                method: "DELETE"
-            });
+            try {
+                const response = await fetch(API_URL + "/todos/" + id, {
+                    method: "DELETE"
+                });
 
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
+                }
+
+                // actualizar la lsita
+                await obtenerLista();
+
+            } catch (error) {
+                console.error("Hubo un problema al eliminar la tarea", error);
             }
-
-            // actualizar la lsita
-            await obtenerLista();
-
-        } catch (error) {
-            console.error("Hubo un problema al eliminar la tarea", error);
         }
-    }
 
 
-    useEffect(() => {
-        obtenerLista()
-    }, [])
+        useEffect(() => {
+            obtenerLista()
+        }, [])
 
 
-    return (
-        <div>
-            <h1>Tareas de NahYah</h1>
-            <div className="container paper">
-                <div className="input-group flex-nowrap">
-                <input type="text"
-                    placeholder="Agregar tarea "
-                    //  actualiza el estado tarea cada vez que el usuario escribe
-                    onChange={(e) => setTarea(e.target.value)}
-                    value={tarea}
-                    //llama ala funcion que maneja la creacion del estado al presionar una tecla ENTER
-                    onKeyDown={inputtext}
-                />
+        return (
+            <div>
+                <h1>Tareas de NahYah</h1>
+                <div className="container paper">
+                    <div className="input-group flex-nowrap">
+                        <input type="text"
+                            placeholder="Agregar tarea "
+
+                            onChange={(e) => setTarea(e.target.value)}
+                            value={tarea}
+                            onKeyDown={inputtext}
+                        />
                 </div>
 
-
-
-
-                {/* hacer condicional */}
-                <ol>
-                    {lista.map((item) => (
-                        <li key={item.id}> {item.label}
-                            {/* <button onClick={() => eliminarTarea(item.id)}>X</button> */}
-                            <button type="button" class="btn btn-outline-success" onClick={() => eliminarTarea(item.id)}>¡Hecho!</button>
-                        </li>
-                    ))}
-                </ol>
-                <p className="itemsleft">{lista.length} item left</p>
+                    {/* hacer condicional */}
+                    <ol>
+                        {lista.map((item) => (
+                            <li key={item.id}> {item.label}
+                                <button type="button" className="btn btn-outline-success" onClick={() => eliminarTarea(item.id)} >¡Hecho!</button>
+                            </li>
+                        ))}
+                    </ol>
+                    <p className="itemsleft">{lista.length} tarea(s) pendiente(s)</p>
+                </div>
             </div>
-        </div>
-    )
+        )
 
-}
+    }
