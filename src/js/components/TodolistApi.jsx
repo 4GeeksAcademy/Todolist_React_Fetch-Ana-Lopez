@@ -10,37 +10,39 @@ export const TodolistApi = () => {
     //guardo la url en un espacio de memoria:
     const API_URL = "https://playground.4geeks.com/todo"
 
-    const crearUsuario = () => {
-
-        fetch(API_URL + "/users/nahyah", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => {
-                console.error("Hubo un problema al crear el usuario", error);
-            })
-    }
-
-    const obtenerLista = () => {
-
-        fetch(API_URL + "/users/nahyah")
-            .then((response) => {
-                if (response.status === 404) {
-                    crearUsuario()
+   
+    const crearUsuario = async () => {
+        try {
+            const response = await fetch(API_URL + "/users/nahyah", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
                 }
-                return response.json()
-            })
-            .then(data => { setLista(data.todos) })
-            .catch(error => {
-                console.error("Hubo un problema al obtener la lista de tareas", error);
-            })
+            });
+            const data = await response.jason();
+            console.log(data);
+
+        } catch (error) {
+            console.error("Hubo un problema al crear el usuario", error);
+        }
+    };
+
+    const obtenerLista = async () => {
+    try {
+        const response = await fetch(API_URL + "/users/nahyah");
+
+        if (response.status === 404) {
+            await crearUsuario();
+            return obtenerLista(); // vuelve a intentarlo
+        }
+
+        const data = await response.json();
+        setLista(data.todos);
+
+    } catch (error) {
+        console.error("Hubo un problema al obtener la lista de tareas", error);
     }
-
-
+};
 
     const crearTarea = async (text) => {
         if (tarea.trim() === "") return;
@@ -67,15 +69,10 @@ export const TodolistApi = () => {
 
             await obtenerLista()
 
-
         } catch (error) {
             console.error("Hubo un problema al crear la tarea", error);
         }
-
-
     }
-
-
 
     const inputtext = (e) => {
         //si la tecla presionada es Enter
@@ -131,12 +128,12 @@ export const TodolistApi = () => {
                         <li>No hay tareas aún</li>
                     ) : (
                         lista.map((item) => (
-                                <li key={item.id}> {item.label}
-                                    <button type="button" className="btn btn-outline-success" onClick={() => eliminarTarea(item.id)} >¡Hecho!</button>
-                                </li>
-                            ))
+                            <li key={item.id}> {item.label}
+                                <button type="button" className="btn btn-outline-success" onClick={() => eliminarTarea(item.id)} >¡Hecho!</button>
+                            </li>
+                        ))
                     )}
-                    </ol>
+                </ol>
                 <p className="itemsleft">{lista.length} tarea(s) pendiente(s)</p>
             </div>
         </div>
