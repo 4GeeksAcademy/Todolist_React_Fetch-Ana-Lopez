@@ -82,59 +82,64 @@ export const TodolistApi = () => {
         if (e.key === "Enter") {
             crearTarea(tarea)
             setTarea("")
+
         }
     }
 
-        const eliminarTarea = async (id) => {
+    const eliminarTarea = async (id) => {
 
-            try {
-                const response = await fetch(API_URL + "/todos/" + id, {
-                    method: "DELETE"
-                });
+        try {
+            const response = await fetch(API_URL + "/todos/" + id, {
+                method: "DELETE"
+            });
 
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
-                }
-
-                // actualizar la lsita
-                await obtenerLista();
-
-            } catch (error) {
-                console.error("Hubo un problema al eliminar la tarea", error);
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudo eliminar la tarea`);
             }
+
+            // actualizar la lsita
+            await obtenerLista();
+
+        } catch (error) {
+            console.error("Hubo un problema al eliminar la tarea", error);
         }
-
-
-        useEffect(() => {
-            obtenerLista()
-        }, [])
-
-
-        return (
-            <div>
-                <h1>Tareas de NahYah</h1>
-                <div className="container paper">
-                    <div className="input-group flex-nowrap">
-                        <input type="text"
-                            placeholder="Agregar tarea "
-
-                            onChange={(e) => setTarea(e.target.value)}
-                            value={tarea}
-                            onKeyDown={inputtext}
-                        />
-                </div>
-
-                    {/* hacer condicional */}
-                    <ol>
-                        {lista.map((item) => (
-                            <li key={item.id}> {item.label}
-                                <button type="button" className="btn btn-outline-success" onClick={() => eliminarTarea(item.id)} >¡Hecho!</button>
-                            </li>
-                        ))}
-                    </ol>
-                    <p className="itemsleft">{lista.length} tarea(s) pendiente(s)</p>
-                </div>
-            </div>
-        )
-
     }
+
+
+    useEffect(() => {
+        obtenerLista()
+    }, [])
+
+
+    return (
+        <div>
+            <h1>Tareas de NahYah</h1>
+            <div className="container paper">
+                <div className="input-group flex-nowrap">
+                    <input type="text"
+                        placeholder="Agregar tarea "
+
+                        onChange={(e) => setTarea(e.target.value)}
+                        value={tarea}
+                        onKeyDown={inputtext}
+                    />
+                </div>
+
+                {/* hacer condicional */}
+                <ol>
+                    {lista.length === 0 ? (
+                        <li>No hay tareas aún</li>
+                    ) : (
+                        lista.map((item) => (
+                                <li key={item.id}> {item.label}
+                                    <button type="button" className="btn btn-outline-success" onClick={() => eliminarTarea(item.id)} >¡Hecho!</button>
+                                </li>
+                            ))
+                    )}
+                    </ol>
+                <p className="itemsleft">{lista.length} tarea(s) pendiente(s)</p>
+            </div>
+        </div>
+    )
+
+}
